@@ -1,17 +1,16 @@
 {
   "title":"Абсолют WEB-оффис","icon32x32":"icons/word-ico32.png","imageSmall":"imgs/word-small.png","imageMain":"imgs/word1.jpg",
-  "modules":["sysadmin","main","docxTemplates"/*,"xlsClients"*/],
+  "modules":["sysadmin","main","docxTemplates","xlsClients"],
   "appMenu":[
     { "menuItemName":"menuBarItemDocDocxTemplates", "menuTitle":"Шаблоны документов Word", "pageTitle":"Шаблоны документов Word", "module":"docxTemplates", "closable":false },
-    { "menuItemName":"menuBarItemDocXlsClients", "menuTitle":"База клиентов в Excel", "pageTitle":"База клиентов в Excel", "module":"xlsClients", "closable":false },
+    { "menuItemName":"menuBarItemDocXlsClientsMenu", "menuTitle":"База клиентов в Excel", "pageTitle":"База клиентов в Excel", "module":"xlsClients", "closable":false },
     { "menuItemName":"menuBarItemHelpAbout", "menuTitle":"О программе", "action":"help_about" },
     { "menuItemName":"menuBarItemClose", "menuTitle":"Выход", "action":"close" }
   ],
   "configDocxTemplates":"configDocxTemplates",
   "usersRoles":{
     "docx":{
-      "menu":["menuBarItemDocDocxTemplates","menuBarItemHelpAbout","menuBarItemClose"],
-      "autorun":["menuBarItemDocDocxTemplates"]
+      "menu":["menuBarItemDocXlsClientsMenu","menuBarItemHelpAbout","menuBarItemClose"]
     },
     "xls":{
       "menu":["menuBarItemDocXlsClients","menuBarItemHelpAbout","menuBarItemClose"],
@@ -19,7 +18,7 @@
     }
   },
   "users":{
-    "asa":{ "name":"Сисадмин", "pswrd":"sysADM123", "sysadmin":true, "userRole":"sysadmin", "autorun":["menuBarItemDocDocxTemplates"] },
+    "asa":{ "name":"Сисадмин", "pswrd":"sysADM123", "sysadmin":true, "userRole":"sysadmin", "autorun":["menuBarItemDocXlsClientsMenu"] },
     "docx":{ "name":"Пользователь docxFiller", "pswrd":"docx", "userRole":"docx" },
     "xls":{ "name":"Пользователь xls БазаКлиентов", "pswrd":"xls", "userRole":"xls" }
   }
