@@ -36,7 +36,7 @@ module.exports.saveConfig= function(fileName,dbConfig,callback){
     })
 };
 module.exports.loadDataFromFile= function(fileName){
-    var stringData= fs.readFileSync(path.join(__dirname,'/../','')+fileName);
+    var stringData= fs.readFileSync(path.join(__dirname,'../','')+fileName);
     return JSON.parse(stringData);
 };
 module.exports.saveDataToFile= function(fileName,data,callback){
