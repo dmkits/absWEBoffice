@@ -73,7 +73,7 @@ var getAppConfigName= function(){ return (sysConfig&&sysConfig.configName)?sysCo
 module.exports.getAppConfigName= getAppConfigName;
 module.exports.getAppConfig= function(){ return appConfig; };
 module.exports.getAppConfigUsers= function(){ return (appConfig&&appConfig.users)?appConfig.users:null; };
-module.exports.getAppConfigMenu= function(){ return (appConfig&&appConfig.appMenu)?appConfig.appMenu:null; };
+module.exports.getAppConfigAppMenu= function(){ return (appConfig&&appConfig.appMenu)?appConfig.appMenu:null; };
 module.exports.getAppConfigModules= function(){ return (appConfig&&appConfig.modules)?appConfig.modules:null; };
 
 var configDocxTemplatesName= appConfig["configDocxTemplates"];
