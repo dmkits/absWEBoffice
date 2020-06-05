@@ -9,8 +9,8 @@ var appModules= require(appModulesPath),
 
 module.exports.validateModule = function(errs, nextValidateModuleCallback){ nextValidateModuleCallback(); };
 
-module.exports.modulePageURL = "/sysadmin";
-module.exports.modulePagePath = "sysadmin.html";
+module.exports.modulePageURL= "/sysadmin";
+module.exports.modulePagePath= "sysadmin.html";
 module.exports.init = function(app){
     app.get("/sysadmin/sysState",function(req,res){
         var revalidateModules= false;
