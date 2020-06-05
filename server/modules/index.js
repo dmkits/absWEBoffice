@@ -24,6 +24,7 @@ module.exports.loadInitAndValidate= function(app,resultCallback){
                 errMsgValidate= errsValidate[errItem];
             }
             loadInitError= errMsgLoadInit; validateError= errMsgValidate;
+            fillMainMenuModuleData(server.getAppConfigAppMenu());
             resultCallback(errsLoadInit,errsValidate,errMsgLoadInit,errMsgValidate);
             return;
         }
@@ -79,3 +80,25 @@ module.exports.loadInitAndValidate= function(app,resultCallback){
     };
     moduleLoadInitValidateCallback(modules, 0, {},{});
 };
+function fillMainMenuItemModuleData(menuItem){
+    if(!menuItem.module) return;
+    var moduleName=menuItem.module;
+    var loadedModuleInstance= loadedModules[moduleName];
+    if(!loadedModuleInstance) return;
+    menuItem.pageId= moduleName;
+    menuItem.action= "open";
+    menuItem.contentHref = loadedModuleInstance.modulePageURL||loadedModuleInstance.moduleViewURL;
+}
+function fillMainMenuModuleData(appMenu){
+    if(!appMenu) return;
+    for(var mainMenuItemIndex in appMenu) {
+        var mainMenuItem= appMenu[mainMenuItemIndex];
+        fillMainMenuItemModuleData(mainMenuItem);
+        if(mainMenuItem.popupMenu){
+            for(var popupMenuItemIndex in mainMenuItem.popupMenu) {
+                var popupMenuItem= mainMenuItem.popupMenu[popupMenuItemIndex];
+                fillMainMenuItemModuleData(popupMenuItem)
+            }
+        }
+    }
+}
