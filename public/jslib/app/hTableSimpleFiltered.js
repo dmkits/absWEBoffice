@@ -358,12 +358,12 @@ define(["dojo/_base/declare", "app/hTableSimple"], function(declare, HTableSimpl
                             }
                         }
                         if(globalFilterValue!==null && !rowVisibleByGlobalFilter && itemVisible==true){
-                            var sDataItemVal=(dataItemVal)?dataItemVal.toString():"", sGlobalFilterVal=globalFilterValue.toString();
-                            if(sDataItemVal===sGlobalFilterVal||sDataItemVal.indexOf(" "+sGlobalFilterVal+" ")>=0) rowVisibleByGlobalFilter= true;
+                            var sDataItemVal=(dataItemVal)?dataItemVal.toString().toUpperCase():"", sGlobalFilterVal=globalFilterValue.toString().toUpperCase();
+                            if(sDataItemVal===sGlobalFilterVal||sDataItemVal.indexOf(sGlobalFilterVal)>=0) rowVisibleByGlobalFilter= true;
                         }
                     }else if(globalFilterValue!==null && !rowVisibleByGlobalFilter){
-                        var sDataItemVal=(dataItemVal)?dataItemVal.toString():"", sGlobalFilterVal=globalFilterValue.toString();
-                        if(sDataItemVal===sGlobalFilterVal||(" "+sDataItemVal+" ").indexOf(" "+sGlobalFilterVal+" ")>=0) rowVisibleByGlobalFilter= true;
+                        var sDataItemVal=(dataItemVal)?dataItemVal.toString().toUpperCase():"", sGlobalFilterVal=globalFilterValue.toString().toUpperCase();
+                        if(sDataItemVal===sGlobalFilterVal||(" "+sDataItemVal+" ").indexOf(sGlobalFilterVal)>=0) rowVisibleByGlobalFilter= true;
                     }
                     rowVisible=rowVisible&&itemVisible;
                 }
