@@ -1,7 +1,7 @@
 define(["dijit/layout/BorderContainer", "dijit/layout/LayoutContainer", "dojox/layout/ContentPane",
         "dijit/layout/TabContainer", "dijit/layout/StackContainer","dijit/layout/StackController",
         "dijit/MenuBar", "dijit/MenuBarItem", "dijit/PopupMenuBarItem", "dijit/Menu", "dijit/MenuItem", "dijit/MenuSeparator",
-        "dijit/form/Button","dijit/form/ToggleButton", "dijit/form/TextBox","dijit/form/DateTextBox"],
+        "dijit/form/Button","dijit/form/ToggleButton", "dijit/form/TextBox","dijit/form/DateTextBox","dijit/form/CheckBox"],
     function(){
         var $ComponentFunctions= function($c,$page){
             this.cid= function(name){
