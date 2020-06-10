@@ -7,7 +7,7 @@ module.exports.validateModule = function(errs, nextValidateModuleCallback){ next
 module.exports.modulePageURL= "/xlsClients";
 module.exports.modulePagePath= "xlsClients.html";
 module.exports.init= function(app){
-    var tFinTableColumns=[
+    var tXlsClientsTableColumns=[
         //№ п/п	Источник данных	Сфера деятельности	Компания	Сайт	Профиль в социальной сети	Ссылка на профиль	Телефон	E-mail	Контактное лицо 	Должность	Профиль в социальной сети	Ссылка на профиль
         {data:"ChID", name:"Код рег.", width:75, type:"text", align:"center", visible:false, dataSource:"t_Sale"},
         {data:"PosNum", name:"№ п/п", width:50, type:"text", align:"right", visible:true},
@@ -60,7 +60,7 @@ module.exports.init= function(app){
         //{data:"RealSum", name:"Сумма", width:75, type:"numeric2",source:"t_SaleD" },
         //{data:"DiscountSum", name:"Сумма скидки", width:65, type:"numeric2",dataFunction:"(PurPriceCC_wt-RealPrice)*Qty" }
     ];
-    var tempStore= [];
+    var dataStoreXlsClientsName="storeXlsClients", tempStoreXlsClients= [];
     app.get("/xlsClients/getXlsClientsDataForTable", function(req, res){
         var conditions={}, allItems=false;
         //for(var condItem in req.query) {
@@ -90,8 +90,8 @@ module.exports.init= function(app){
         //    function(result){
         //        res.send(result);
         //    });
-        tempStore= systemFuncs.loadDataFromFile("dataStore/storeXlsClients.json");
-        res.send({columns:dataModel._getTableColumnsDataForHTable(tFinTableColumns), identifier:tFinTableColumns[0].data, items:tempStore});
+        tempStoreXlsClients= systemFuncs.loadDataFromFile("dataStore/"+dataStoreXlsClientsName+".json");
+        res.send({columns:dataModel._getTableColumnsDataForHTable(tXlsClientsTableColumns), identifier:tXlsClientsTableColumns[0].data, items:tempStoreXlsClients});
     });
 
     app.post("/xlsClients/storeXlsClientsTableData",function(req,res){                                            console.log("data",req.body);
@@ -99,13 +99,13 @@ module.exports.init= function(app){
         if(data){
             var chID= data["ChID"];
             if(chID==null){//append
-                chID= tempStore.length; data["ChID"]= chID;
-                tempStore[chID]= data;
+                chID= tempStoreXlsClients.length; data["ChID"]= chID;
+                tempStoreXlsClients[chID]= data;
             }else{//replace
-                tempStore[chID]= data;
+                tempStoreXlsClients[chID]= data;
             }
-        }                                                                                               console.log("tempStore",tempStore);
-        systemFuncs.saveDataToFile("/dataStore/storeXlsClients.json",tempStore);
+        }                                                                                               console.log("tempStore",tempStoreXlsClients);
+        systemFuncs.saveDataToFile("/dataStore/"+dataStoreXlsClientsName+".json",tempStoreXlsClients);
         res.send({resultItem:data, updateCount:1});
         //res.send({error:"no store function!"});
     });
