@@ -70,14 +70,26 @@ module.exports.setSysConfig= function(newSysConfig){ sysConfig= newSysConfig; };
 
 var getAppConfigName= function(){ return (sysConfig&&sysConfig.configName)?sysConfig.configName:'config';},
     appConfig= JSON.parse(systemFuncs.getJSONWithoutComments(fs.readFileSync('./'+getAppConfigName()+'.json','utf-8')));
+if(!appConfig){                                                                                     log.error("FAILED LOAD APPLICATION CONFIG! Reason: config is empty.");
+    return;
+}
 module.exports.getAppConfigName= getAppConfigName;
 module.exports.getAppConfig= function(){ return appConfig; };
-module.exports.getAppConfigUsers= function(){ return (appConfig&&appConfig.users)?appConfig.users:null; };
-module.exports.getAppConfigAppMenu= function(){ return (appConfig&&appConfig.appMenu)?appConfig.appMenu:null; };
 module.exports.getAppConfigModules= function(){ return (appConfig&&appConfig.modules)?appConfig.modules:null; };
-
+if(!appConfig.modules||!appConfig.modules.length){                                                  log.error("FAILED LOAD APPLICATION CONFIG MODULES! Reason: no modules.");
+    return;
+}
+module.exports.getAppConfigUsers= function(){ return (appConfig&&appConfig.users)?appConfig.users:null; };
+if(!appConfig.users){                                                                               log.error("FAILED LOAD APPLICATION CONFIG USERS! Reason: no users.");
+    return;
+}
+module.exports.getAppConfigUsersRoles= function(){ return (appConfig&&appConfig.usersRoles)?appConfig.usersRoles:null; };
+module.exports.getAppConfigMenuItems= function(){ return (appConfig&&appConfig.menuItems)?appConfig.menuItems:null; };
+if(!appConfig.menuItems||!appConfig.menuItems.length){                                              log.error("FAILED LOAD APPLICATION CONFIG MENU ITEMS! Reason: no menu items.");
+    return;
+}
 var configDocxTemplatesName= appConfig["configDocxTemplates"];
-if(!configDocxTemplatesName){                                                                           log.error('FAILED start server! Reason: no configDocxTemplates in system config.');
+if(!configDocxTemplatesName){                                                                       log.error('FAILED start server! Reason: no configDocxTemplates in system config.');
     return;
 }
 var appConfigDocxTemplates= JSON.parse(systemFuncs.getJSONWithoutComments(fs.readFileSync('./'+configDocxTemplatesName+'.json','utf-8')));
