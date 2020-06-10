@@ -1,12 +1,12 @@
-<LayoutContainer id="fin_PageContainer" style="width:100%;height:100%;margin:0px;padding:0;">
-    <StackContainer id="fin_ContentContainer" region="center" tabPosition="top" style="width:100%;height:100%; margin:5px;padding:0;">
-        <TDocSimpleTableEdt id="fin_TDocDBLogins" style="margin:0;padding:0;"></TDocSimpleTableEdt>
+<LayoutContainer id="xlsClients_PageContainer" style="width:100%;height:100%;margin:0px;padding:0;">
+    <StackContainer id="xlsClients_ContentContainer" region="center" tabPosition="top" style="width:100%;height:100%; margin:5px;padding:0;">
+        <TDocSimpleTableEdt id="xlsClients_TDocXlsClients" style="margin:0;padding:0;"></TDocSimpleTableEdt>
     </StackContainer>
 </LayoutContainer>
 <script type="text/javascript">                                                                             //log("sysadmin logins $$",$$);//!!!IT'S FOR TESTING!!!
-    $$.fin_TDocDBLogins
+    $$.xlsClients_TDocXlsClients
             .init({titleText: "База клиентов Excel", dataURL:'/xlsClients/getXlsClientsDataForTable', buttonPrint:false,
-                rightPane:{width:300},
+                manualColumnResize:true, manualColumnMove:true, rightPane:{width:300},
                 dataStoreURL:"/xlsClients/storeXlsClientsTableData"
             })
             .addTotalCountNumberBox("ИТОГО строк:", 140, {style:"font-weight:bold;",inputStyle:"width:40px;"})
@@ -44,8 +44,8 @@
 //                }
                 nextCallback();
             });
-    $$.fin_TDocDBLogins.onShow= function(){
-        if(!$$.fin_TDocDBLogins.startedUp)$$.fin_TDocDBLogins.startupDoc();
+    $$.xlsClients_TDocXlsClients.onShow= function(){
+        if(!$$.xlsClients_TDocXlsClients.startedUp)$$.xlsClients_TDocXlsClients.startupDoc();
     };
-    $$.fin_TDocDBLogins.onShow();
+    $$.xlsClients_TDocXlsClients.onShow();
 </script>
