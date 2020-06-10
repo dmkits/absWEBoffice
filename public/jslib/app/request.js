@@ -214,7 +214,7 @@ define(["dojo/request", "app/base","app/dialogs"],
                 params.id="requestFailDialog"; params.width=350; params.btnOkLabel="Закрыть";
                 var instance= base.getInstanceByID(params.id);
                 if(instance&&instance.open)return;
-                dialogs.showSimple(params);
+                dialogs.showSimpleDialog(params);
             }
         };
     });

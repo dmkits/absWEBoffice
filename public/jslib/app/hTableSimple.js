@@ -590,7 +590,7 @@ define(["dojo/_base/declare", "dijit/layout/ContentPane","dojox/widget/Standby",
                 return rowData;
             },
             updateRowsActionDialog: function(actionParams,progressMaximum){
-                return Dialogs.showProgress({id:this.id + "_progressBarForDialog", title:"Выполнение операции",
+                return Dialogs.showProgressDialog({id:this.id + "_progressBarForDialog", title:"Выполнение операции",
                     width:530, contentHeight:actionParams.progressDialogContentHeight,
                     btnOkLabel:"Закрыть", btnStopLabel:"Остановить", progressMaximum:progressMaximum});
             },

@@ -95,8 +95,8 @@
                 $$.main_page.$.addInnerPage({region:"center", title:menuItemData.menuTitle, closable:false, style:"margin:0;padding:0;",content:exitContent});
             });
         };
-        var aboutAction= function(menuItemData){
-            $$.dialogs.showSimple({title:"О программе",
+        var aboutAction= function(){
+            $$.dialogs.showSimpleDialog({title:"О программе",
                 content:"<b>Absolute WEB-office</b>. <br>Разработчик: dmkits<br> 2020",
                 btnOkLabel:"Закрыть"
             });
