@@ -1,24 +1,32 @@
-var server= require("../server"), log= server.log, appParams= server.getAppStartupParams(), appConfig= server.getAppConfig(),
+var server= require("../server"), log= server.log, appParams= server.getAppStartupParams(),
+    appConfig= server.getAppConfig(), getAppConfigMenuItems= server.getAppConfigMenuItems,
+    getAppConfigUsersRoles= server.getAppConfigUsersRoles, getAppConfigUsers= server.getAppConfigUsers,
     docxTemplates= require("./docxTemplates");
 
 module.exports.validateModule = function(errs, nextValidateModuleCallback){ nextValidateModuleCallback(); };
 
-function setUserMenuFromAppConfig(outData, userLogin, userRole, appConfig){
-    var usersConfig= appConfig.users, usersRolesConfig= appConfig.usersRoles, appMenu= appConfig.appMenu,
-        userRoleItems= usersRolesConfig[userRole], userConfig= (usersConfig)?usersConfig[userLogin]:null, userMenu=[];
+function setUserMenuFromAppConfig(outData, userLogin, userRole, getAppConfigUsers, getAppConfigMenuItems, getAppConfigUsersRoles){
+    var minAppMenuItems= ["menuBarItemHelpAbout","menuBarItemClose"];
+    if(!getAppConfigMenuItems||!getAppConfigUsersRoles){ outData.menuBar= minAppMenuItems; return; }
+    var appConfigUsersRoles= getAppConfigUsersRoles(), userRoleItems= appConfigUsersRoles[userRole],
+        appMenuItems= getAppConfigMenuItems(),
+        appConfigUsers= (getAppConfigUsers)?getAppConfigUsers():null, appConfigUserData= (appConfigUsers)?appConfigUsers[userLogin]:null;
     if(!userRoleItems&&userRole=="sysadmin"){
-        outData.menuBar= appMenu;
-        if(userConfig&&userConfig.autorun) outData.autorun= userConfig.autorun;
+        outData.menuBar= appMenuItems||minAppMenuItems;
+        if(appConfigUserData&&appConfigUserData.autorun) outData.autorun= appConfigUserData.autorun;
         return;
     }
-    if(!userRoleItems) userRoleItems= {menu:["menuBarItemHelpAbout","menuBarItemClose"]};
+    var userMenu=[];
+    if(!appMenuItems||!appConfigUsersRoles){ outData.menuBar= minAppMenuItems; return; }
+    if(!userRoleItems||!appMenuItems) userRoleItems= {menu:minAppMenuItems};
     var userRoleMenu= userRoleItems.menu;
+    if(!userRoleMenu){ outData.menuBar= minAppMenuItems; return; }
     for(var i in userRoleMenu){
         var userRoleMenuItemName= userRoleMenu[i];
-        for(var j in appMenu){
-            var appMenuItem= appMenu[j];
+        for(var j in appMenuItems){
+            var appMenuItem= appMenuItems[j];
             if(userRoleMenuItemName==appMenuItem.menuItemName){
-                var userItem = {};
+                var userItem={};
                 for(var item in appMenuItem) userItem[item]= appMenuItem[item];
                 if(userItem.popupMenu) userItem.popupMenu=null;
                 userMenu.push(userItem);
@@ -41,7 +49,7 @@ function setUserMenuFromAppConfig(outData, userLogin, userRole, appConfig){
         }
     }
     outData.menuBar= userMenu;
-    outData.autorun= (userConfig&&userConfig.autorun)?userConfig.autorun:userRoleItems.autorun;
+    outData.autorun= (appConfigUserData&&appConfigUserData.autorun)?appConfigUserData.autorun:userRoleItems.autorun;
 }
 
 
@@ -59,13 +67,8 @@ module.exports.init= function(app){
         outData.title= appConfig.title;
         outData.icon32x32= appConfig.icon32x32; outData.imageSmall= appConfig.imageSmall; outData.imageMain= appConfig.imageMain;
         outData.appUserName= req.appUserName||"UNKNOWN"; outData.appUserRole= req.appUserRole||"UNKNOWN";
-
-        //outData.menuBar= appConfig.menu;
-        setUserMenuFromAppConfig(outData, req.appUserLogin, req.appUserRole, appConfig);
-        //outData.menuBar= getMenuForDocx(appConfig.templates);
+        setUserMenuFromAppConfig(outData, req.appUserLogin, req.appUserRole, getAppConfigUsers, getAppConfigMenuItems, getAppConfigUsersRoles);
         docxTemplates.setUserMenuDocxTemplatesFromAppConfig(outData.menuBar,server.getAppConfigDocxTemplates());
-        //setUserMenuDocxTemplatesFromAppConfig(outData, server.getAppConfigDocxTemplates());
-
         res.send(outData);
     });
     app.post("/exit", function(req,res){
