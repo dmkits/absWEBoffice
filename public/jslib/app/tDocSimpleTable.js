@@ -69,12 +69,12 @@ define(["dojo/_base/declare", "dijit/layout/BorderContainer", "app/tDocsFunction
                 if(params.useFilters===undefined) params.useFilters=true;
                 if(params.allowFillHandle===undefined) params.allowFillHandle=false;
                 this.addChild(this.contentHTable=new HTable(params));
-                var instance = this;
-                this.contentHTable.onUpdateContent = function(){
+                var instance=this;
+                this.contentHTable.onUpdateContent= function(params){
                     if(!this.getSelectedRow()) this.setSelectedRowByIndex(0);
-                    instance.onUpdateTableContent();
+                    instance.onUpdateTableContent(params,this.getContent(),this.getColumns());
                 };
-                this.contentHTable.onSelect = function(firstSelectedRowData, selection){
+                this.contentHTable.onSelect= function(firstSelectedRowData, selection){
                     this.setSelection(firstSelectedRowData, selection);
                     instance.onSelectTableContent(firstSelectedRowData, selection);
                 };
@@ -136,14 +136,20 @@ define(["dojo/_base/declare", "dijit/layout/BorderContainer", "app/tDocsFunction
             getHTableContentItemSum: function(tableItemName){
                 return this.contentHTable.getContentItemSum(tableItemName);
             },
-            onUpdateTableContent: function(){
-                if(!this.totals) return;
-                for(var tableItemName in this.totals){
-                    var totalBox = this.totals[tableItemName];
-                    totalBox.updateValue();
-                }
+            onUpdateTableContent: function(params,htContent,htColumns){
+                if(this.totals) for(var tableItemName in this.totals) this.totals[tableItemName].updateValue();
+                if(this.contentHTableActions)
+                    for(var contentHTableActionData of this.contentHTableActions)
+                        if(contentHTableActionData&&contentHTableActionData["onUpdateTableContent"])
+                            contentHTableActionData["onUpdateTableContent"](params,htContent,htColumns,this);
                 this.callToolPanesContentTableActions();
                 this.layout();
+            },
+            addActionOnUpdateTableContent: function(actionFunction){
+                if(!actionFunction) return this;
+                if(!this.contentHTableActions) this.contentHTableActions=[];
+                this.contentHTableActions.push({"onUpdateTableContent":actionFunction});
+                return this;
             },
             onSelectTableContent: function(firstSelectedRowData, selection){
                 this.callToolPanesContentTableActions(firstSelectedRowData);
