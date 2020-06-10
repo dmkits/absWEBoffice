@@ -81,7 +81,7 @@ module.exports.init= function(app){
             tFields= tmplData.fields;
             if(!tFields){ res.send({error:"Template data no fields!",userErrorMsg:"Для шаблона не заданы поля параметров!"}); return; }
             var tFieldsParams={};
-            for(var tfID in tFields) tFieldsParams[tfID]=tfID+" "+tFields[tfID];
+            for(var tfID in tFields) tFieldsParams[tfID]=tFields[tfID];
             res.send({fields:tFieldsParams,files:tmplData.files});
             return;
         }else if(action=="getTemplateParamsHistory"){
