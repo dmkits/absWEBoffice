@@ -28,10 +28,12 @@ define(["dojo/_base/declare", "dijit/layout/BorderContainer", "app/tDocsFunction
             },
             /**
              * params: { titleText, dataURL, dataURLCondition={...},
-            *            rightPane:{ width:<width>, ... },
-            *            buttonUpdate, buttonPrint, buttonExportToExcel,
-            *            printFormats={ ... } or other. }
-            */
+             *          manualColumnResize:true/false/[<column list>], manualColumnMove:true/false/[<column list>], readOnly:true/false, wordWrap:true/false,
+             *            rightPane:{ width:<width>, ... },
+             *            buttonUpdate, buttonPrint, buttonExportToExcel,
+             *            printFormats={ ... } or other. }
+             * manualColumnResize, manualColumnMove, readOnly, wordWrap - for HTable
+             */
             init: function(params){
                 if(!params)return this;
                 for(var pName in params){
@@ -40,6 +42,7 @@ define(["dojo/_base/declare", "dijit/layout/BorderContainer", "app/tDocsFunction
                 }
                 if(this.titleText) this.topHeaderTitle.innerHTML=this.titleText;
                 if(this.rightContainerParams) this.createRightContent(this.rightContainerParams);
+                this.contentHTable.updateSettings(params);
                 return this;
             },
             createTopContent: function(){
@@ -59,6 +62,10 @@ define(["dojo/_base/declare", "dijit/layout/BorderContainer", "app/tDocsFunction
                 if(!params.style) params.style="margin:0;padding:0;";
                 if(params.readOnly===undefined) params.readOnly=true;
                 if(params.wordWrap===undefined) params.wordWrap=true;
+                if(params.manualColumnResize===undefined) params.manualColumnResize=false;
+                if(this.manualColumnResize==true) params.manualColumnResize= this.manualColumnResize;
+                if(params.manualColumnMove===undefined) params.manualColumnMove=false;
+                if(this.manualColumnMove==true) params.manualColumnMove= this.manualColumnMove;
                 if(params.useFilters===undefined) params.useFilters=true;
                 if(params.allowFillHandle===undefined) params.allowFillHandle=false;
                 this.addChild(this.contentHTable=new HTable(params));

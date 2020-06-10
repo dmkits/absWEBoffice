@@ -42,6 +42,8 @@ define(["dojo/_base/declare", "dijit/layout/ContentPane","dojox/widget/Standby",
                 //this.showIdentifiers=false;
                 this.readOnly= true;//HTableSimple,hTableSimpleFiltered only read only. see cells function.
                 this.wordWrap= false;
+                this.manualColumnResize= args.manualColumnResize||false;
+                this.manualColumnMove= args.manualColumnMove||false;
                 this.persistentState= false;
                 this.popupMenuItems= [];
                 this.enableComments=false; this.htComments=[];
@@ -149,7 +151,8 @@ define(["dojo/_base/declare", "dijit/layout/ContentPane","dojox/widget/Standby",
                     fillHandle: { autoInsertRow: false, direction: 'vertical' },//it's for use fillHandle in childrens
                     startRows: 1,
                     fixedColumnsLeft: 0, fixedRowsTop: 0,
-                    manualColumnResize: true, manualRowResize: false,
+                    manualColumnResize:parent.manualColumnResize||false, manualRowResize: false,
+                    manualColumnMove: parent.manualColumnMove,
                     persistentState: parent.persistentState,
                     readOnly: parent.readOnly!==false,
                     wordWrap: parent.wordWrap, trimWhitespace:false,
@@ -220,6 +223,19 @@ define(["dojo/_base/declare", "dijit/layout/ContentPane","dojox/widget/Standby",
                 this.handsonTable.updateSettings({ contextMenu:{items:this.popupMenuItems} });
             },
             getHandsonTable: function(){ return this.handsonTable; },
+            /**
+             * params = { manualColumnResize:true/false/[<column list>], manualColumnMove:true/false/[<column list>], readOnly:true/false, wordWrap:true/false }
+             */
+            updateSettings: function(params){
+                if(!params) return;
+                var hTableSettings={};
+                for(var pName in params){
+                    if(pName=="manualColumnResize"||pName=="manualColumnMove"||pName=="readOnly"||pName=="wordWrap"){
+                        this[pName]=params[pName]; hTableSettings[pName]=params[pName];
+                    }
+                }
+                this.handsonTable.updateSettings(hTableSettings);
+            },
             resizeAll: function(changeSize,resultSize){
                 if(!changeSize) return;
                 this.resizePane(changeSize,resultSize);
@@ -335,7 +351,7 @@ define(["dojo/_base/declare", "dijit/layout/ContentPane","dojox/widget/Standby",
                     columns:this.htColumns, manualColumnResize:false,colWidths:this.colWidths,
                     data:this.getData(), readOnly:this.readOnly!==false, comments:this.enableComments
                 });
-                this.handsonTable.updateSettings({manualColumnResize:true});
+                if(this.manualColumnResize) this.handsonTable.updateSettings({manualColumnResize:true});
                 if(params&&params.resetSelection!==false) this.resetSelection();
                 this.setMenuItemHTableColumns();
                 if(params&&params.callUpdateContent===false) return;

@@ -395,7 +395,7 @@ define(["dojo/_base/declare", "app/hTableSimple"], function(declare, HTableSimpl
                 columns:this.htColumns, manualColumnResize:false,colWidths:this.colWidths,
                 data:newContent, readOnly:this.readOnly, comments:this.enableComments
             });
-            this.handsonTable.updateSettings({manualColumnResize:true});
+            if(this.manualColumnResize) this.handsonTable.updateSettings({manualColumnResize:true});
             this.setMenuItemHTableColumns(function(){ thisHTable.updateContent(); });
             if(params.resetSelection!==false) this.resetSelection();
             if(params.callUpdateContent===false) return;
