@@ -24,7 +24,7 @@ module.exports.loadInitAndValidate= function(app,resultCallback){
                 errMsgValidate= errsValidate[errItem];
             }
             loadInitError= errMsgLoadInit; validateError= errMsgValidate;
-            fillMainMenuModuleData(server.getAppConfigAppMenu());
+            fillMainMenuModuleData(server.getAppConfigMenuItems());
             resultCallback(errsLoadInit,errsValidate,errMsgLoadInit,errMsgValidate);
             return;
         }
