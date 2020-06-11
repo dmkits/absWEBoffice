@@ -122,10 +122,10 @@ define(["app/base", "dijit/Dialog", "dijit/form/Button", "dijit/ProgressBar", "d
                     this.progress();
                 };
                 if(!dlg.addMsgLine) dlg.addMsgLine=function(msg,params){
-                    if(params.contentHeight) this.setContentHeight(params.contentHeight);
+                    if(params&&params.contentHeight) this.setContentHeight(params.contentHeight);
                     this.progress();
                     this.messagesContent.domNode.appendChild(this.lastMessage=document.createElement("div"));
-                    if(params.textStyle)
+                    if(params&&params.textStyle)
                         this.lastMessage.innerHTML='<span style="'+params.textStyle+'">'+msg+'</span>';
                     else
                         this.lastMessage.innerHTML=msg;
@@ -133,7 +133,7 @@ define(["app/base", "dijit/Dialog", "dijit/form/Button", "dijit/ProgressBar", "d
                 };
                 if(!dlg.addMsg) dlg.addMsg=function(msg,params){
                     this.progress();
-                    if(params.textStyle)
+                    if(params&&params.textStyle)
                         this.lastMessage.innerHTML+='<span style="'+params.textStyle+'">'+msg+'</span>';
                     else
                         this.lastMessage.innerHTML+=msg;
@@ -142,7 +142,7 @@ define(["app/base", "dijit/Dialog", "dijit/form/Button", "dijit/ProgressBar", "d
                 if(!dlg.setMsg) dlg.setMsg=function(msg,params){
                     this.progress();
                     if(!this.lastMessage)this.messagesContent.domNode.appendChild(this.lastMessage=document.createElement("div"));
-                    if(params.textStyle)
+                    if(params&&params.textStyle)
                         this.lastMessage.innerHTML='<span style="'+params.textStyle+'">'+msg+'</span>';
                     else
                         this.lastMessage.innerHTML=msg;
@@ -152,7 +152,7 @@ define(["app/base", "dijit/Dialog", "dijit/form/Button", "dijit/ProgressBar", "d
                     this.progress();
                     if(progress>=0)this.progressBarForDialog.set("value",progress);
                     if(msgLine)this.addMsgLine(msgLine);
-                    if(params.progressAction) params.progressAction(progress,dlg);
+                    if(params&&params.progressAction) params.progressAction(progress,dlg);
                 };
                 if(params.onlyCreate!==true)dlg.show();
                 return dlg;
