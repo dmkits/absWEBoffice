@@ -22,10 +22,10 @@ module.exports.init= function(app){
         {data:"Profile2", name:"Профиль в социальной сети 2", width:150, type:"text", align:"center"},
         {data:"ProfileLink2", name:"Ссылка на профиль 2", width:150, type:"text", align:"center"}
     ];
-    var dataStoreXlsClientsName="storeXlsClients", tempStoreXlsClients= [];
+    var dataStoreDocXlsClientsName="dataStoreDocXlsClients", dataStoreDocXlsClients=[];
     app.get("/docXlsClients/getXlsClientsDataForTable",function(req,res){
-        tempStoreXlsClients= systemFuncs.loadDataFromFile("dataStore/"+dataStoreXlsClientsName+".json");
-        res.send({columns:dataModel._getTableColumnsDataForHTable(tXlsClientsTableColumns), identifier:tXlsClientsTableColumns[0].data, items:tempStoreXlsClients});
+        dataStoreDocXlsClients= systemFuncs.loadDataFromFile("dataStore/"+dataStoreDocXlsClientsName+".json");
+        res.send({columns:dataModel._getTableColumnsDataForHTable(tXlsClientsTableColumns), identifier:tXlsClientsTableColumns[0].data, items:dataStoreDocXlsClients});
     });
     app.post("/docXlsClients/storeXlsClientsTableData",function(req,res){
         var data= req.body;
@@ -36,12 +36,12 @@ module.exports.init= function(app){
         }
         var chID= data["ChID"];
         if(chID==null){//append
-            chID= tempStoreXlsClients.length; data["ChID"]= chID;
-            tempStoreXlsClients[chID]= data;
+            chID= dataStoreDocXlsClients.length; data["ChID"]= chID;
+            dataStoreDocXlsClients[chID]= data;
         }else{//replace
-            tempStoreXlsClients[chID]= data;
+            dataStoreDocXlsClients[chID]= data;
         }
-        systemFuncs.saveDataToFile("/dataStore/"+dataStoreXlsClientsName+".json",tempStoreXlsClients);
+        systemFuncs.saveDataToFile("/dataStore/"+dataStoreDocXlsClientsName+".json",dataStoreDocXlsClients);
         res.send({resultItem:data, updateCount:1});
     });
     app.post("/docXlsClients/delXlsClientsTableData",function(req,res){
@@ -52,14 +52,14 @@ module.exports.init= function(app){
                 message:"Невозможно удалить запись! Нет кода регистрации."}});
             return;
         }
-        var delIndex= tempStoreXlsClients.findIndex(function(elem,index,arr){ return elem&&elem["ChID"]==delChID; });
+        var delIndex= dataStoreDocXlsClients.findIndex(function(elem,index,arr){ return elem&&elem["ChID"]==delChID; });
         if(delIndex<0){
             res.send({error:{error:"Failed delete docXlsClients record! Reason: dont find record for delete by ChID.",
                 message:"Невозможно удалить запись! Не найдена запись для удаления по коду регистрации."}});
             return;
         }
-        tempStoreXlsClients.splice(delIndex,1);
-        systemFuncs.saveDataToFile("/dataStore/"+dataStoreXlsClientsName+".json",tempStoreXlsClients);
+        dataStoreDocXlsClients.splice(delIndex,1);
+        systemFuncs.saveDataToFile("/dataStore/"+dataStoreDocXlsClientsName+".json",dataStoreDocXlsClients);
         res.send({resultItem:{"ChID":delChID}, updateCount:1});
     });
 };

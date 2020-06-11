@@ -20,18 +20,15 @@ module.exports.init= function(app){
         {data:"Industry", name:"Отрасль", width:250, align:"center",
             type:"combobox", sourceURL:"/docXlsBusinessCards/getDataForXlsBusinessCardsIndustryCombobox"}
     ];
-    var dataStoreXlsBusinessCardsName="storeXlsBusinessCards", tempStoreXlsBusinessCards= [];
+    var dataStoreDocXlsBusinessCardsName="dataStoreDocXlsBusinessCards", dataStoreDocXlsBusinessCards=[];
     app.get("/docXlsBusinessCards/getXlsBusinessCardsDataForTable",function(req,res){
-        tempStoreXlsBusinessCards= systemFuncs.loadDataFromFile("dataStore/"+dataStoreXlsBusinessCardsName+".json");
-        res.send({columns:dataModel._getTableColumnsDataForHTable(tXlsBusinessCardsTableColumns), identifier:tXlsBusinessCardsTableColumns[0].data, items:tempStoreXlsBusinessCards});
+        dataStoreDocXlsBusinessCards= systemFuncs.loadDataFromFile("dataStore/"+dataStoreDocXlsBusinessCardsName+".json");
+        res.send({columns:dataModel._getTableColumnsDataForHTable(tXlsBusinessCardsTableColumns), identifier:tXlsBusinessCardsTableColumns[0].data, items:dataStoreDocXlsBusinessCards});
     });
-
-
     if(!dir_xlsBusinessCardsIndustries.getDataForXlsBusinessCardsIndustryCombobox) throw new Error("NO dir_xlsBusinessCardsIndustries.getDataForXlsBusinessCardsIndustryCombobox!");
     app.get("/docXlsBusinessCards/getDataForXlsBusinessCardsIndustryCombobox",function(req,res){
         dir_xlsBusinessCardsIndustries.getDataForXlsBusinessCardsIndustryCombobox(function(result){ res.send(result); });
     });
-
     app.post("/docXlsBusinessCards/storeXlsBusinessCardsTableData",function(req,res){
         var data= req.body;
         if(!data){
@@ -41,12 +38,12 @@ module.exports.init= function(app){
         }
         var chID= data["ChID"];
         if(chID==null){//append
-            chID= tempStoreXlsBusinessCards.length; data["ChID"]= chID;
-            tempStoreXlsBusinessCards[chID]= data;
+            chID= dataStoreDocXlsBusinessCards.length; data["ChID"]= chID;
+            dataStoreDocXlsBusinessCards[chID]= data;
         }else{//replace
-            tempStoreXlsBusinessCards[chID]= data;
+            dataStoreDocXlsBusinessCards[chID]= data;
         }
-        systemFuncs.saveDataToFile("/dataStore/"+dataStoreXlsBusinessCardsName+".json",tempStoreXlsBusinessCards);
+        systemFuncs.saveDataToFile("/dataStore/"+dataStoreDocXlsBusinessCardsName+".json",dataStoreDocXlsBusinessCards);
         res.send({resultItem:data, updateCount:1});
     });
     app.post("/docXlsBusinessCards/delXlsBusinessCardsTableData",function(req,res){
@@ -57,14 +54,14 @@ module.exports.init= function(app){
                 message:"Невозможно удалить запись! Нет кода регистрации."}});
             return;
         }
-        var delIndex= tempStoreXlsBusinessCards.findIndex(function(elem,index,arr){ return elem&&elem["ChID"]==delChID; });
+        var delIndex= dataStoreDocXlsBusinessCards.findIndex(function(elem,index,arr){ return elem&&elem["ChID"]==delChID; });
         if(delIndex<0){
             res.send({error:{error:"Failed delete docXlsBusinessCards record! Reason: dont find record for delete by ChID.",
                 message:"Невозможно удалить запись! Не найдена запись для удаления по коду регистрации."}});
             return;
         }
-        tempStoreXlsBusinessCards.splice(delIndex,1);
-        systemFuncs.saveDataToFile("/dataStore/"+dataStoreXlsBusinessCardsName+".json",tempStoreXlsBusinessCards);
+        dataStoreDocXlsBusinessCards.splice(delIndex,1);
+        systemFuncs.saveDataToFile("/dataStore/"+dataStoreDocXlsBusinessCardsName+".json",dataStoreDocXlsBusinessCards);
         res.send({resultItem:{"ChID":delChID}, updateCount:1});
     });
 };
