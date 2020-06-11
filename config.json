@@ -1,10 +1,16 @@
 {
   "title":"Абсолют WEB-оффис","icon32x32":"icons/word-ico32.png","imageSmall":"imgs/word-small.png","imageMain":"imgs/word1.jpg",
-  "modules":["sysadmin","system","main","docxTemplates","doc_xlsClients","doc_xlsBusinessCards"],
+  "modules":["sysadmin","system","main","docxTemplates","doc_xlsClients","doc_xlsBusinessCards","dir_xlsBusinessCardsIndustries"],
   "menuItems":[
     { "menuItemName":"menuBarItemDocDocxTemplatesMenu", "menuTitle":"Шаблоны документов Word", "pageTitle":"Шаблоны документов Word", "module":"docxTemplates", "closable":false },
     { "menuItemName":"menuBarItemDocXlsClients", "menuTitle":"База клиентов Excel", "pageTitle":"База клиентов Excel", "module":"doc_xlsClients", "closable":true },
     { "menuItemName":"menuBarItemDocXlsBusinessCards", "menuTitle":"База Визитки", "pageTitle":"База Визитки", "module":"doc_xlsBusinessCards", "closable":true },
+
+    { "menuItemName":"menuBarItemDirsMenu", "menuTitle":"Справочники", "pageTitle":"Справочники",
+      "popupMenu":[
+        { "menuItemName":"menuBarItemDirXlsBusinessCardsIndustries", "menuTitle":"Справочник отраслей", "pageTitle":"Справочник отраслей", "module":"dir_xlsBusinessCardsIndustries", "closable":true }
+      ]
+    },
     { "menuItemName":"menuBarItemHelpAbout", "menuTitle":"О программе", "action":"help_about" },
     { "menuItemName":"menuBarItemClose", "menuTitle":"Выход", "action":"close" }
   ],
@@ -14,7 +20,10 @@
       "menu":["menuBarItemDocDocxTemplatesMenu","menuBarItemHelpAbout","menuBarItemClose"]
     },
     "xls":{
-      "menu":["menuBarItemDocXlsClients","menuBarItemDocXlsBusinessCards","menuBarItemHelpAbout","menuBarItemClose"],
+      "menu":["menuBarItemDocXlsClients","menuBarItemDocXlsBusinessCards",
+        "menuBarItemDirsMenu","menuBarItemDirXlsBusinessCardsIndustries",
+        "menuBarItemHelpAbout","menuBarItemClose"
+      ],
       "autorun":["menuBarItemDocXlsClients","menuBarItemDocXlsBusinessCards"]
     }
   },
