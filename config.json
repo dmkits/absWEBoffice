@@ -1,6 +1,10 @@
 {
   "title":"Абсолют WEB-оффис","icon32x32":"icons/word-ico32.png","imageSmall":"imgs/word-small.png","imageMain":"imgs/word1.jpg",
-  "modules":["sysadmin","system","main","docxTemplates","doc_xlsClients","dir_xlsBusinessCardsIndustries","doc_xlsBusinessCards"],
+  "modules":["sysadmin","system","main",
+    "docxTemplates",
+    "doc_xlsClients",
+    "dir_xlsBusinessCardsIndustries","dir_xlsBusinessCardsRegions","doc_xlsBusinessCards"
+  ],
   "menuItems":[
     { "menuItemName":"menuBarItemDocDocxTemplatesMenu", "menuTitle":"Шаблоны документов Word", "pageTitle":"Шаблоны документов Word", "module":"docxTemplates", "closable":false },
     { "menuItemName":"menuBarItemDocXlsClients", "menuTitle":"База клиентов Excel", "pageTitle":"База клиентов Excel", "module":"doc_xlsClients", "closable":true },
@@ -8,6 +12,7 @@
 
     { "menuItemName":"menuBarItemDirsMenu", "menuTitle":"Справочники", "pageTitle":"Справочники",
       "popupMenu":[
+        { "menuItemName":"menuBarItemDirXlsBusinessCardsRegions", "menuTitle":"Справочник областей", "pageTitle":"Справочник областей", "module":"dir_xlsBusinessCardsRegions", "closable":true },
         { "menuItemName":"menuBarItemDirXlsBusinessCardsIndustries", "menuTitle":"Справочник отраслей", "pageTitle":"Справочник отраслей", "module":"dir_xlsBusinessCardsIndustries", "closable":true }
       ]
     },
@@ -21,7 +26,7 @@
     },
     "xls":{
       "menu":["menuBarItemDocXlsClients","menuBarItemDocXlsBusinessCards",
-        "menuBarItemDirsMenu","menuBarItemDirXlsBusinessCardsIndustries",
+        "menuBarItemDirsMenu","menuBarItemDirXlsBusinessCardsRegions","menuBarItemDirXlsBusinessCardsIndustries",
         "menuBarItemHelpAbout","menuBarItemClose"
       ],
       "autorun":["menuBarItemDocXlsClients","menuBarItemDocXlsBusinessCards"]
