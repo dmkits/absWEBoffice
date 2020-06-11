@@ -1,6 +1,7 @@
 var dataModel=require(appDataModelPath);
 var systemFuncs= require('../systemFuncs');
-var dir_xlsBusinessCardsIndustries= require("./dir_xlsBusinessCardsIndustries"), dir_xlsBusinessCardsRegions= require("./dir_xlsBusinessCardsRegions");
+var dir_xlsBusinessCardsRegions= require("./dir_xlsBusinessCardsRegions"), dir_xlsBusinessCardsCities= require("./dir_xlsBusinessCardsCities"),
+    dir_xlsBusinessCardsIndustries= require("./dir_xlsBusinessCardsIndustries");
 
 module.exports.validateModule = function(errs, nextValidateModuleCallback){ nextValidateModuleCallback(); };
 
@@ -15,7 +16,8 @@ module.exports.init= function(app){
         {data:"Telephone", name:"Телефон", width:120, type:"text", align:"center"},
         {data:"Company", name:"Компания", width:200, type:"text", align:"left"},
         {data:"Post", name:"Должность", width:150, type:"text", align:"center"},
-        {data:"City", name:"Город", width:120, type:"text", align:"center"},
+        {data:"City", name:"Город", width:240, align:"center",
+            type:"combobox", sourceURL:"/docXlsBusinessCards/getDataForXlsBusinessCardsCitiesCombobox"},
         {data:"Region", name:"Область", width:150, align:"center",
             type:"combobox", sourceURL:"/docXlsBusinessCards/getDataForXlsBusinessCardsRegionsCombobox"},
         {data:"Industry", name:"Отрасль", width:250, align:"center",
@@ -25,6 +27,10 @@ module.exports.init= function(app){
     app.get("/docXlsBusinessCards/getXlsBusinessCardsDataForTable",function(req,res){
         dataStoreDocXlsBusinessCards= systemFuncs.loadDataFromFile("dataStore/"+dataStoreDocXlsBusinessCardsName+".json");
         res.send({columns:dataModel._getTableColumnsDataForHTable(tXlsBusinessCardsTableColumns), identifier:tXlsBusinessCardsTableColumns[0].data, items:dataStoreDocXlsBusinessCards});
+    });
+    if(!dir_xlsBusinessCardsCities.getDataForXlsBusinessCardsCitiesCombobox) throw new Error("NO dir_xlsBusinessCardsCities.getDataForXlsBusinessCardsCitiesCombobox!");
+    app.get("/docXlsBusinessCards/getDataForXlsBusinessCardsCitiesCombobox",function(req,res){
+        dir_xlsBusinessCardsCities.getDataForXlsBusinessCardsCitiesCombobox(function(result){ res.send(result); });
     });
     if(!dir_xlsBusinessCardsRegions.getDataForXlsBusinessCardsRegionsCombobox) throw new Error("NO dir_xlsBusinessCardsRegions.getDataForXlsBusinessCardsRegionsCombobox!");
     app.get("/docXlsBusinessCards/getDataForXlsBusinessCardsRegionsCombobox",function(req,res){
