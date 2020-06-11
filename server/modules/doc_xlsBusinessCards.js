@@ -1,5 +1,6 @@
 var dataModel=require(appDataModelPath);
 var systemFuncs= require('../systemFuncs');
+var dir_xlsBusinessCardsIndustries= require("./dir_xlsBusinessCardsIndustries");
 
 module.exports.validateModule = function(errs, nextValidateModuleCallback){ nextValidateModuleCallback(); };
 
@@ -16,13 +17,21 @@ module.exports.init= function(app){
         {data:"Post", name:"Должность", width:150, type:"text", align:"center"},
         {data:"City", name:"Город", width:120, type:"text", align:"center"},
         {data:"Region", name:"Область", width:150, type:"text", align:"center"},
-        {data:"Industry", name:"Отрасль", width:150, type:"text", align:"center"}
+        {data:"Industry", name:"Отрасль", width:250, align:"center",
+            type:"combobox", sourceURL:"/docXlsBusinessCards/getDataForXlsBusinessCardsIndustryCombobox"}
     ];
     var dataStoreXlsBusinessCardsName="storeXlsBusinessCards", tempStoreXlsBusinessCards= [];
-    app.get("/docXlsBusinessCards/getXlsBusinessCardsDataForTable", function(req, res){
+    app.get("/docXlsBusinessCards/getXlsBusinessCardsDataForTable",function(req,res){
         tempStoreXlsBusinessCards= systemFuncs.loadDataFromFile("dataStore/"+dataStoreXlsBusinessCardsName+".json");
         res.send({columns:dataModel._getTableColumnsDataForHTable(tXlsBusinessCardsTableColumns), identifier:tXlsBusinessCardsTableColumns[0].data, items:tempStoreXlsBusinessCards});
     });
+
+
+    if(!dir_xlsBusinessCardsIndustries.getDataForXlsBusinessCardsIndustryCombobox) throw new Error("NO dir_xlsBusinessCardsIndustries.getDataForXlsBusinessCardsIndustryCombobox!");
+    app.get("/docXlsBusinessCards/getDataForXlsBusinessCardsIndustryCombobox",function(req,res){
+        dir_xlsBusinessCardsIndustries.getDataForXlsBusinessCardsIndustryCombobox(function(result){ res.send(result); });
+    });
+
     app.post("/docXlsBusinessCards/storeXlsBusinessCardsTableData",function(req,res){
         var data= req.body;
         if(!data){

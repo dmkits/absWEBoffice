@@ -11,8 +11,12 @@ module.exports.init= function(app){
         {data:"Industry", name:"Отрасль", width:500, type:"text", align:"center"}
     ];
     var dataStoreXlsBusinessCardsIndustriesName="storeXlsBusinessCardsIndustries", tempStoreXlsBusinessCardsIndustries= [];
-    app.get("/dirXlsBusinessCardsIndustries/getXlsBusinessCardsIndustriesDataForTable", function(req, res){
+    var loadXlsBusinessCardsIndustries= function(){
         tempStoreXlsBusinessCardsIndustries= systemFuncs.loadDataFromFile("dataStore/"+dataStoreXlsBusinessCardsIndustriesName+".json");
+    };
+    loadXlsBusinessCardsIndustries();
+    app.get("/dirXlsBusinessCardsIndustries/getXlsBusinessCardsIndustriesDataForTable", function(req, res){
+        loadXlsBusinessCardsIndustries();
         res.send({columns:dataModel._getTableColumnsDataForHTable(tXlsBusinessCardsTableColumns), identifier:tXlsBusinessCardsTableColumns[0].data, items:tempStoreXlsBusinessCardsIndustries});
     });
     app.post("/dirXlsBusinessCardsIndustries/storeXlsBusinessCardsIndustriesTableData",function(req,res){
@@ -50,4 +54,8 @@ module.exports.init= function(app){
         systemFuncs.saveDataToFile("/dataStore/"+dataStoreXlsBusinessCardsIndustriesName+".json",tempStoreXlsBusinessCardsIndustries);
         res.send({resultItem:{"ChID":delChID}, updateCount:1});
     });
+
+    module.exports.getDataForXlsBusinessCardsIndustryCombobox= function(callback){
+        callback({items:tempStoreXlsBusinessCardsIndustries});
+    };
 };
