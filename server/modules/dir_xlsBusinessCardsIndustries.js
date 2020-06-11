@@ -6,7 +6,7 @@ module.exports.validateModule = function(errs, nextValidateModuleCallback){ next
 module.exports.modulePageURL= "/dirXlsBusinessCardsIndustries";
 module.exports.modulePagePath= "dir_xlsBusinessCardsIndustries.html";
 module.exports.init= function(app){
-    var tXlsBusinessCardsTableColumns=[//Отрасль
+    var tDirXlsBusinessCardsIndustriesTableColumns=[//Отрасль
         {data:"ChID", name:"Код рег.", width:75, type:"text", align:"center", visible:false},
         {data:"Industry", name:"Отрасль", width:500, type:"text", align:"center"}
     ];
@@ -17,7 +17,9 @@ module.exports.init= function(app){
     loadDirXlsBusinessCardsIndustries();
     app.get("/dirXlsBusinessCardsIndustries/getXlsBusinessCardsIndustriesDataForTable", function(req, res){
         loadDirXlsBusinessCardsIndustries();
-        res.send({columns:dataModel._getTableColumnsDataForHTable(tXlsBusinessCardsTableColumns), identifier:tXlsBusinessCardsTableColumns[0].data, items:dataStoreDirXlsBusinessCardsIndustries});
+        res.send({columns:dataModel._getTableColumnsDataForHTable(tDirXlsBusinessCardsIndustriesTableColumns),
+            identifier:tDirXlsBusinessCardsIndustriesTableColumns[0].data, items:dataStoreDirXlsBusinessCardsIndustries
+        });
     });
     app.post("/dirXlsBusinessCardsIndustries/storeXlsBusinessCardsIndustriesTableData",function(req,res){
         var data= req.body;
@@ -54,7 +56,6 @@ module.exports.init= function(app){
         systemFuncs.saveDataToFile("/dataStore/"+dataStoreDirXlsBusinessCardsIndustriesName+".json",dataStoreDirXlsBusinessCardsIndustries);
         res.send({resultItem:{"ChID":delChID}, updateCount:1});
     });
-
     module.exports.getDataForXlsBusinessCardsIndustryCombobox= function(callback){
         callback({items:dataStoreDirXlsBusinessCardsIndustries});
     };
