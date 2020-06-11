@@ -5,9 +5,9 @@
 </LayoutContainer>
 <script type="text/javascript">
     $$.xlsBusinessCards_TDocXlsBusinessCards
-            .init({titleText: "База ВИЗИТКИ", dataURL:'/xlsBusinessCards/getXlsBusinessCardsDataForTable', buttonPrint:false,
+            .init({titleText: "База ВИЗИТКИ", dataURL:'/docXlsBusinessCards/getXlsBusinessCardsDataForTable', buttonPrint:false,
                 manualColumnResize:true, manualColumnMove:true, rightPane:{width:300},
-                dataStoreURL:"/xlsBusinessCards/storeXlsBusinessCardsTableData", dataDeleteURL:"/xlsBusinessCards/delXlsBusinessCardsTableData"
+                dataStoreURL:"/docXlsBusinessCards/storeXlsBusinessCardsTableData", dataDeleteURL:"/docXlsBusinessCards/delXlsBusinessCardsTableData"
             })
             .addTotalCountNumberBox("ИТОГО строк:", 140, {style:"font-weight:bold;",inputStyle:"width:40px;"})
             .addActionOnUpdateTableContent(function(paramsUpdateTableContent,htContent,htColumns,doc){
