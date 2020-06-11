@@ -325,7 +325,7 @@ define(["dijit/layout/LayoutContainer", "dijit/layout/ContentPane", "dijit/Title
                     columnsDataForExcel.push(columnForExcel);
                 }
                 var xhr = new XMLHttpRequest();
-                xhr.open('POST',"/sys/getExcelFile");
+                xhr.open('POST',"/system/getExcelFile");
                 xhr.responseType = 'blob';
                 xhr.onload = function (e){
                     if(this.status == 200){
