@@ -10,14 +10,14 @@ module.exports.init= function(app){
         {data:"ChID", name:"Код рег.", width:75, type:"text", align:"center", visible:false},
         {data:"Industry", name:"Отрасль", width:500, type:"text", align:"center"}
     ];
-    var dataStoreXlsBusinessCardsIndustriesName="storeXlsBusinessCardsIndustries", tempStoreXlsBusinessCardsIndustries= [];
-    var loadXlsBusinessCardsIndustries= function(){
-        tempStoreXlsBusinessCardsIndustries= systemFuncs.loadDataFromFile("dataStore/"+dataStoreXlsBusinessCardsIndustriesName+".json");
+    var dataStoreDirXlsBusinessCardsIndustriesName="dataStoreDirXlsBusinessCardsIndustries", dataStoreDirXlsBusinessCardsIndustries=[];
+    var loadDirXlsBusinessCardsIndustries= function(){
+        dataStoreDirXlsBusinessCardsIndustries= systemFuncs.loadDataFromFile("dataStore/"+dataStoreDirXlsBusinessCardsIndustriesName+".json");
     };
-    loadXlsBusinessCardsIndustries();
+    loadDirXlsBusinessCardsIndustries();
     app.get("/dirXlsBusinessCardsIndustries/getXlsBusinessCardsIndustriesDataForTable", function(req, res){
-        loadXlsBusinessCardsIndustries();
-        res.send({columns:dataModel._getTableColumnsDataForHTable(tXlsBusinessCardsTableColumns), identifier:tXlsBusinessCardsTableColumns[0].data, items:tempStoreXlsBusinessCardsIndustries});
+        loadDirXlsBusinessCardsIndustries();
+        res.send({columns:dataModel._getTableColumnsDataForHTable(tXlsBusinessCardsTableColumns), identifier:tXlsBusinessCardsTableColumns[0].data, items:dataStoreDirXlsBusinessCardsIndustries});
     });
     app.post("/dirXlsBusinessCardsIndustries/storeXlsBusinessCardsIndustriesTableData",function(req,res){
         var data= req.body;
@@ -28,12 +28,12 @@ module.exports.init= function(app){
         }
         var chID= data["ChID"];
         if(chID==null){//append
-            chID= tempStoreXlsBusinessCardsIndustries.length; data["ChID"]= chID;
-            tempStoreXlsBusinessCardsIndustries[chID]= data;
+            chID= dataStoreDirXlsBusinessCardsIndustries.length; data["ChID"]= chID;
+            dataStoreDirXlsBusinessCardsIndustries[chID]= data;
         }else{//replace
-            tempStoreXlsBusinessCardsIndustries[chID]= data;
+            dataStoreDirXlsBusinessCardsIndustries[chID]= data;
         }
-        systemFuncs.saveDataToFile("/dataStore/"+dataStoreXlsBusinessCardsIndustriesName+".json",tempStoreXlsBusinessCardsIndustries);
+        systemFuncs.saveDataToFile("/dataStore/"+dataStoreDirXlsBusinessCardsIndustriesName+".json",dataStoreDirXlsBusinessCardsIndustries);
         res.send({resultItem:data, updateCount:1});
     });
     app.post("/dirXlsBusinessCardsIndustries/delXlsBusinessCardsIndustriesTableData",function(req,res){
@@ -44,18 +44,18 @@ module.exports.init= function(app){
                 message:"Невозможно удалить запись! Нет кода регистрации."}});
             return;
         }
-        var delIndex= tempStoreXlsBusinessCardsIndustries.findIndex(function(elem,index,arr){ return elem&&elem["ChID"]==delChID; });
+        var delIndex= dataStoreDirXlsBusinessCardsIndustries.findIndex(function(elem,index,arr){ return elem&&elem["ChID"]==delChID; });
         if(delIndex<0){
             res.send({error:{error:"Failed delete dirXlsBusinessCardsIndustries record! Reason: dont find record for delete by ChID.",
                 message:"Невозможно удалить запись! Не найдена запись для удаления по коду регистрации."}});
             return;
         }
-        tempStoreXlsBusinessCardsIndustries.splice(delIndex,1);
-        systemFuncs.saveDataToFile("/dataStore/"+dataStoreXlsBusinessCardsIndustriesName+".json",tempStoreXlsBusinessCardsIndustries);
+        dataStoreDirXlsBusinessCardsIndustries.splice(delIndex,1);
+        systemFuncs.saveDataToFile("/dataStore/"+dataStoreDirXlsBusinessCardsIndustriesName+".json",dataStoreDirXlsBusinessCardsIndustries);
         res.send({resultItem:{"ChID":delChID}, updateCount:1});
     });
 
     module.exports.getDataForXlsBusinessCardsIndustryCombobox= function(callback){
-        callback({items:tempStoreXlsBusinessCardsIndustries});
+        callback({items:dataStoreDirXlsBusinessCardsIndustries});
     };
 };
