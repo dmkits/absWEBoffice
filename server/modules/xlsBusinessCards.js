@@ -1,5 +1,4 @@
 var dataModel=require(appDataModelPath);
-//var r_Ours= require(appDataModelPath+"r_Ours");
 var systemFuncs= require('../systemFuncs');
 
 module.exports.validateModule = function(errs, nextValidateModuleCallback){ nextValidateModuleCallback(); };
@@ -7,8 +6,7 @@ module.exports.validateModule = function(errs, nextValidateModuleCallback){ next
 module.exports.modulePageURL= "/xlsBusinessCards";
 module.exports.modulePagePath= "xlsBusinessCards.html";
 module.exports.init= function(app){
-    var tXlsBusinessCardsTableColumns=[
-        //ФИО	Имя (нужно для удобства копирования столбцов при эл.рассылке)	E-mail	Телефон	Компания	Должность	Город	Область	Отрасль
+    var tXlsBusinessCardsTableColumns=[//ФИО	Имя (нужно для удобства копирования столбцов при эл.рассылке)	E-mail	Телефон	Компания	Должность	Город	Область	Отрасль
         {data:"ChID", name:"Код рег.", width:75, type:"text", align:"center", visible:false},
         {data:"ContactInitials", name:"ФИО", width:200, type:"text", align:"center"},
         {data:"ContactName", name:"Имя", width:100, type:"text", align:"center"},
@@ -25,19 +23,39 @@ module.exports.init= function(app){
         tempStoreXlsBusinessCards= systemFuncs.loadDataFromFile("dataStore/"+dataStoreXlsBusinessCardsName+".json");
         res.send({columns:dataModel._getTableColumnsDataForHTable(tXlsBusinessCardsTableColumns), identifier:tXlsBusinessCardsTableColumns[0].data, items:tempStoreXlsBusinessCards});
     });
-    app.post("/xlsBusinessCards/storeXlsBusinessCardsTableData",function(req,res){                                            console.log("data",req.body);
+    app.post("/xlsBusinessCards/storeXlsBusinessCardsTableData",function(req,res){
         var data= req.body;
-        if(data){
-            var chID= data["ChID"];
-            if(chID==null){//append
-                chID= tempStoreXlsBusinessCards.length; data["ChID"]= chID;
-                tempStoreXlsBusinessCards[chID]= data;
-            }else{//replace
-                tempStoreXlsBusinessCards[chID]= data;
-            }
-        }                                                                                               console.log("tempStore",tempStoreXlsBusinessCards);
+        if(!data){
+            res.send({error:{error:"Failed store xlsBusinessCards record! Reason: no data for store.",
+                message:"Невозможно сохранить запись! Нет данных для сохранения."}});
+            return;
+        }
+        var chID= data["ChID"];
+        if(chID==null){//append
+            chID= tempStoreXlsBusinessCards.length; data["ChID"]= chID;
+            tempStoreXlsBusinessCards[chID]= data;
+        }else{//replace
+            tempStoreXlsBusinessCards[chID]= data;
+        }
         systemFuncs.saveDataToFile("/dataStore/"+dataStoreXlsBusinessCardsName+".json",tempStoreXlsBusinessCards);
         res.send({resultItem:data, updateCount:1});
-        //res.send({error:"no store function!"});
+    });
+    app.post("/xlsBusinessCards/delXlsBusinessCardsTableData",function(req,res){
+        var data= req.body;
+        var delChID= (data)?data["ChID"]:null;
+        if(delChID==null){
+            res.send({error:{error:"Failed delete xlsBusinessCards record! Reason: no ChID.",
+                message:"Невозможно удалить запись! Нет кода регистрации."}});
+            return;
+        }
+        var delIndex= tempStoreXlsBusinessCards.findIndex(function(elem,index,arr){ return elem&&elem["ChID"]==delChID; });
+        if(delIndex<0){
+            res.send({error:{error:"Failed delete xlsBusinessCards record! Reason: dont find record for delete by ChID.",
+                message:"Невозможно удалить запись! Не найдена запись для удаления по коду регистрации."}});
+            return;
+        }
+        tempStoreXlsBusinessCards.splice(delIndex,1);
+        systemFuncs.saveDataToFile("/dataStore/"+dataStoreXlsBusinessCardsName+".json",tempStoreXlsBusinessCards);
+        res.send({resultItem:{"ChID":delChID}, updateCount:1});
     });
 };

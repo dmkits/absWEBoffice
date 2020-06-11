@@ -7,7 +7,7 @@
     $$.xlsBusinessCards_TDocXlsBusinessCards
             .init({titleText: "База ВИЗИТКИ", dataURL:'/xlsBusinessCards/getXlsBusinessCardsDataForTable', buttonPrint:false,
                 manualColumnResize:true, manualColumnMove:true, rightPane:{width:300},
-                dataStoreURL:"/xlsBusinessCards/storeXlsBusinessCardsTableData"
+                dataStoreURL:"/xlsBusinessCards/storeXlsBusinessCardsTableData", dataDeleteURL:"/xlsBusinessCards/delXlsBusinessCardsTableData"
             })
             .addTotalCountNumberBox("ИТОГО строк:", 140, {style:"font-weight:bold;",inputStyle:"width:40px;"})
             .addActionOnUpdateTableContent(function(paramsUpdateTableContent,htContent,htColumns,doc){
