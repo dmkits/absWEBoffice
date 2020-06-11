@@ -23,7 +23,7 @@ module.exports.init= function(app){
         {data:"ProfileLink2", name:"Ссылка на профиль 2", width:150, type:"text", align:"center"}
     ];
     var dataStoreXlsClientsName="storeXlsClients", tempStoreXlsClients= [];
-    app.get("/docXlsClients/getXlsClientsDataForTable", function(req, res){
+    app.get("/docXlsClients/getXlsClientsDataForTable",function(req,res){
         tempStoreXlsClients= systemFuncs.loadDataFromFile("dataStore/"+dataStoreXlsClientsName+".json");
         res.send({columns:dataModel._getTableColumnsDataForHTable(tXlsClientsTableColumns), identifier:tXlsClientsTableColumns[0].data, items:tempStoreXlsClients});
     });
