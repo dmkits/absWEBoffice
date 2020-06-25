@@ -14,9 +14,9 @@ var getTemplateLastItemsByDate= function(tUID, count){
     //console.log("last=",historyDB.get('templates').findLast(function(item){return item.id=tID}).value());//IT'S FOR TEST
     //console.log("filter=",historyDB.get('templates').filter(function(item){return item.id=tID}).sortBy('datetime').takeRight(100).value());//IT'S FOR TEST
     //console.log("getTemplateLastItemsByDate map=",historyDB.get('templates').filter(function(item){return item.id=tID}).orderBy('datetime','desc').take(count).map('data').value());//IT'S FOR TEST
-    var tID= docxTemplatesByUID[tUID].name;
+    var tName= docxTemplatesByUID[tUID].name;
     var resultSet=
-        historyDB.get('templates').filter(function(item){return item.id==tID}).orderBy('datetime','desc').take(count);
+        historyDB.get('templates').filter(function(item){return item.name==tName}).orderBy('datetime','desc').take(count);
     return resultSet.map(function(item){ item.data['datetime']=item.datetime; return item.data }).value();
 };
 module.exports.setUserMenuDocxTemplatesFromAppConfig= function(menuBar,appConfigDocxTemplates){
@@ -64,11 +64,11 @@ module.exports.init= function(app){
 
     app.get("/docxTemplates/*",function(req,res){
         if(!req.params){ res.send({error:"UNKNOWN URI!"}); return; }
-        var urlParams= req.params[0].split('/'), tUID= urlParams[0], action= urlParams[1];                                            console.log("urlParams",urlParams);
+        var urlParams= req.params[0].split('/'), tUID= urlParams[0], action= urlParams[1];                      //console.log("urlParams",urlParams);
         if(!tUID){ res.send({error:"UNKNOWN URI!"}); return; }
         if(!action){
             var tmplItemData= docxTemplatesByUID[tUID];
-            if(!tmplItemData){ res.send({error:"NO finded template data by template UID!",userErrorMsg:"Нет заданы параметры для шаблона!"}); return; }
+            if(!tmplItemData){ res.send({error:{message:"NO finded template data by template UID!",userMessage:"Нет заданы параметры для шаблона!"}}); return; }
             fs.readFile(appViewsPath+"docxTemplates.html",'utf8',function(err,tPage){
                 if(err){ res.send({error:"Failed get template page! Reason:"+err.message}); return; }
                 res.send(tPage.replace(/docxTemplates_/g,tUID));
@@ -77,18 +77,18 @@ module.exports.init= function(app){
         }
         if(action=="getTemplateData"){
             var tmplData= docxTemplatesByUID[tUID], tFields;
-            if(!tmplData){ res.send({error:"NO finded template data by template UID!",userErrorMsg:"Нет заданы параметры для шаблона!"}); return; }
+            if(!tmplData){ res.send({error:{message:"NO finded template data by template UID!",userMessage:"Нет заданы параметры для шаблона!"}}); return; }
             tFields= tmplData.fields;
-            if(!tFields){ res.send({error:"Template data no fields!",userErrorMsg:"Для шаблона не заданы поля параметров!"}); return; }
+            if(!tFields){ res.send({error:{message:"Template data no fields!",userMessage:"Для шаблона не заданы поля параметров!"}}); return; }
             var tFieldsParams={};
             for(var tfID in tFields) tFieldsParams[tfID]=tFields[tfID];
             res.send({fields:tFieldsParams,files:tmplData.files});
             return;
         }else if(action=="getTemplateParamsHistory"){
             var tmplData= docxTemplatesByUID[tUID], tFields;
-            if(!tmplData){ res.send({error:"NO finded template data by template ID!",userErrorMsg:"Нет заданы параметры для шаблона!"}); return; }
+            if(!tmplData){ res.send({error:{message:"NO finded template data by template ID!",userMessage:"Нет заданы параметры для шаблона!"}}); return; }
             tFields= tmplData.fields;
-            if(!tFields){ res.send({error:"Template data no fields!",userErrorMsg:"Для шаблона не заданы поля параметров!"}); return; }
+            if(!tFields){ res.send({error:{message:"Template data no fields!",userMessage:"Для шаблона не заданы поля параметров!"}}); return; }
             var tTableParamsHistory=[
                 {data:"datetime", name:"Дата", width:100, type:"text",datetimeFormat:"DD.MM.YY HH:mm:ss",align:"center", useFilter:false }
             ];
@@ -105,32 +105,32 @@ module.exports.init= function(app){
         if(!action){ res.send({error:"NO URI action!"}); return; }
         if(action=="sendDataAndGenDocx"){
             var tmplData= docxTemplatesByUID[tUID], tFields;
-            if(!tmplData){ res.send({error:"NO finded template data by template UID!",userErrorMsg:"В конфигурации не заданы параметры для шаблона!"}); return; }
-            if(!tmplData.directory){ res.send({error:"NO path with templates!",userErrorMsg:"В конфигурации не указан путь расположения шаблонов!"}); return; }
-            if(!tmplData.outputPath){ res.send({error:"NO path for store template docx!",userErrorMsg:"В конфигурации не указан путь для сохранения результата!"}); return; }
+            if(!tmplData){ res.send({error:{message:"NO finded template data by template UID!",userMessage:"В конфигурации не заданы параметры для шаблона!"}}); return; }
+            if(!tmplData.directory){ res.send({error:{message:"NO path with templates!",userMessage:"В конфигурации не указан путь расположения шаблонов!"}}); return; }
+            if(!tmplData.outputPath){ res.send({error:{message:"NO path for store template docx!",userMessage:"В конфигурации не указан путь для сохранения результата!"}}); return; }
             if(!req.body||!req.body.values){
-                res.send({error:"NO data values for generate template docx!",userErrorMsg:"Для заполнения шаблона нет значений!"});
+                res.send({error:{message:"NO data values for generate template docx!",userMessage:"Для заполнения шаблона нет значений!"}});
                 return;
             }
             try{
                 var values= JSON.parse(req.body.values);
             }catch(e){
-                res.send({error:"Data values not valid for generate template docx!",userErrorMsg:"Для заполнения шаблона указанные значения недопустимы!"});
+                res.send({error:{message:"Data values not valid for generate template docx!",userMessage:"Для заполнения шаблона указанные значения недопустимы!"}});
                 return;
             }
             if(!req.body.files){
-                res.send({error:"NO files for generate template docx!",userErrorMsg:"Не указаны файлы шаблонов для генерации!"});
+                res.send({error:{message:"NO files for generate template docx!",userMessage:"Не указаны файлы шаблонов для генерации!"}});
                 return;
             }                                                                                                   log.debug("docxTemplates sendDataAndGenDocx values=",values,"\nfiles=",req.body.files,{});
-            var storeHistoryResult="SUCCESS";
+            var storeHistoryResult= null;
             try{
-                storeHistory(tUID,values);
+                if(storeHistory(tUID,values)) storeHistoryResult="История значений сохранена (сохраненные параметры).";
             }catch(e){
-                storeHistoryResult="ERROR";
+                storeHistoryResult+= "Не удалось сохранить значения в истории значений (сохраненные параметры)! Причина: "+e.message;
             }
             var files= req.body.files;
             if(typeof(files)=="string") files=[files];
-            var ramdomizeFileds= tmplData.ramdomizeFileds, ramdomizer= server.getConfigItem("ramdomizer");
+            var ramdomizeFileds= tmplData.ramdomizeFileds, ramdomizer= appConfigDocxTemplates["ramdomizer"];
             if(ramdomizeFileds&&ramdomizer){
                 var randomFont= Math.floor(Math.random()*ramdomizer.fonts.length),
                     randomFSize= Math.floor(Math.random()*ramdomizer.sizes.length);
@@ -146,7 +146,7 @@ module.exports.init= function(app){
             }
             genDOCX.generateDOCX(0,{values:values,files:files,directory:tmplData.directory,outputPath:tmplData.outputPath},
                 function(result){
-                    if(!result) result={generateResult:true,userMsg:"Все документы по шаблонам успешно созданы!",storeHistoryResult:storeHistoryResult};
+                    if(!result) result= {generateResult:true,userMsg:"Все документы по шаблонам успешно созданы!",storeHistoryResult:storeHistoryResult};
                     res.send(result);
                 });
             return;
@@ -155,14 +155,16 @@ module.exports.init= function(app){
     });
 };
 
-function storeHistory(tID,data){
-    var lastItems=getTemplateLastItemsByDate(tID,1), lastItem;
+function storeHistory(tUID,data){
+    var lastItems= getTemplateLastItemsByDate(tUID,1), lastItem;
     if(lastItems)lastItem= lastItems[0];
     if(lastItem){
         var equals=true;
         for(var tfID in data) if(data[tfID]!=lastItem[tfID]){ equals=false; break; }
-        if(equals) return;
+        if(equals) return false;
     }
-    historyDB.get('templates').push({id:tID,datetime:new Date(),data:data}).value();
+    var tName= docxTemplatesByUID[tUID].name;
+    historyDB.get('templates').push({name:tName,datetime:new Date(),data:data}).value();
     historyDB.write(); historyDB.read();
+    return true;
 }

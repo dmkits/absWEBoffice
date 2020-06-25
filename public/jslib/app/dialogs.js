@@ -7,14 +7,14 @@ define(["app/base", "dijit/Dialog", "dijit/form/Button", "dijit/ProgressBar", "d
             /**
              * IANAGEZ 20.10.2017
              * params = {id, title, content, btnOkLabel, style, width, height, actionBarTemplate, addButtons}
-             *      addButtons = [ <button ID>:{ label, onClick:function(thisDialog)}, positionBefore="btnOk"/<button ID> ... ]
+             *      addButtons = { <button ID>:{ label, onClick:function(thisDialog)}, positionBefore="btnOk"/<button ID>}, ... }
+             *               positionBefore - id exists button
              */
             _doSimpleDialog: function(params){
                 if(!params) params={};
                 if(!params.id) params.id="DialogSimple";
                 var dialogStyle="text-align:center;",
-                    btnOKID=params.id+"_btnOK",
-                    actionBarTemplate=params.actionBarTemplate||'<div class="dijitDialogPaneActionBar" style="text-align:center"><button id="'+btnOKID+'"></button></div>';
+                    actionBarTemplate=params.actionBarTemplate||'<div class="dijitDialogPaneActionBar" style="text-align:center"></div>';
                 var dlg = base.instance(params.id, Dialog, {actionBarTemplate:actionBarTemplate});
                 if(params.width)dialogStyle=dialogStyle+'width:'+params.width+'px; ';
                 if(params.height)dialogStyle=dialogStyle+'height:'+params.height+'px; ';
@@ -22,34 +22,49 @@ define(["app/base", "dijit/Dialog", "dijit/form/Button", "dijit/ProgressBar", "d
                 if(!params.title) params.title="";
                 dlg.set("title", params.title);
                 if(params.content)dlg.set("content", params.content);
+                var dialogPaneActionBar= dlg.domNode.lastElementChild;
                 if(!dlg.btnOK){
-                    dlg.btnOK=new Button({"label":"Ok", style:"margin:5px;margin-right:10px;", onClick:function(){ dlg.hide(); } },btnOKID);
+                    dlg.btnOK=new Button({id:params.id+"_btnOK","label":"Ok", style:"margin:5px;margin-right:10px;", onClick:function(){ dlg.hide(); } });
+                    dialogPaneActionBar.appendChild(dlg.btnOK.domNode);
                     //dlg.btnOK.focusNode.style.width="80px";
-                    dlg.btnOK.startup();
                 }
                 if(params.btnOkLabel)dlg.btnOK.set("label",params.btnOkLabel);
                 dlg.startup();
                 return dlg;
             },
+            /**
+             * destroyed exists added buttons and added new buttons.
+             * params = { addButtons }
+             *      addButtons = { <button ID>:{ label, onClick:function(thisDialog)}, positionBefore="btnOk"/<button ID>}, ... }
+             *          positionBefore - id exists button
+             */
             _addButtons: function(params,dlg){
                 if(!params||!params.addButtons) return;
+                for(var addBtnID in dlg.dialogPaneActionBarAddedButtons){
+                    var addedBtn= dlg.dialogPaneActionBarAddedButtons[addBtnID];
+                    addedBtn.destroy();
+                    if(dlg[addBtnID]!=null) dlg[addBtnID]= null;
+                }
+                dlg.dialogPaneActionBarAddedButtons= {};
                 for(var addBtnIDinDlg in params.addButtons){
                     var addBtnParams= params.addButtons[addBtnIDinDlg];
                     if(!addBtnParams) continue;
-                    var addBtn= new Button({"label":addBtnParams.label, style:"margin:5px;margin-left:10px;",
-                        onClick:function(){ var btnOnClick=addBtnParams.onClick; if(btnOnClick) btnOnClick(dlg); } });
+                    var addBtn= new Button({"label":addBtnParams.label, style:"margin:5px;margin-left:10px;"});
                     dlg[addBtnIDinDlg]= addBtn;
+                    dlg.dialogPaneActionBarAddedButtons[addBtnIDinDlg]= addBtn;
                     var positionBeforeBtn= (addBtnParams.positionBefore)?dlg[addBtnParams.positionBefore]:null;
                     if(positionBeforeBtn&&positionBeforeBtn.type=="button")
                         dlg.btnOK.domNode.parentNode.insertBefore(addBtn.domNode,positionBeforeBtn.domNode);
                     else
                         dlg.btnOK.domNode.parentNode.appendChild(addBtn.domNode);
+                    (function(btn){ var btnOnClick=addBtnParams.onClick; if(btnOnClick) btn.onClick=function(){ btnOnClick(dlg); } })(addBtn);
                     addBtn.startup();
                 }
             },
             /**
              * params = {id, title, content, btnOkLabel, style, width, actionBarTemplate, addButtons }
-             *      addButtons = [ <button ID>:{ label, onClick:function(thisDialog)}, positionBefore="btnOk"/<button ID> ... ]
+             *      addButtons = { <button ID>:{ label, onClick:function(thisDialog)}, positionBefore="btnOk"/<button ID>}, ... }
+             *          positionBefore - id exists button
              */
             showSimpleDialog: function(params){//showSimple
                 if(!params) params={};
@@ -62,7 +77,8 @@ define(["app/base", "dijit/Dialog", "dijit/form/Button", "dijit/ProgressBar", "d
              * params = {id, title, content, btnOkLabel, style, width, contentHeight,
              *              addButtons, progressAction: function(progressCount,<thisDialog>)
              *              progressMaximum, btnStop,btnStopLabel, onlyCreate }
-             *      addButtons = [ <button ID>:{ label, onClick:function(thisDialog)}, positionBefore="btnOk"/"btnStop"/<button ID> ... ]
+             *      addButtons = { <button ID>:{ label, onClick:function(thisDialog)}, positionBefore="btnOk"/"btnStop"/<button ID>},  ... }
+             *          positionBefore - id exists button
              *      default: onlyCreate!=true
              *      if params.onlyCreate = true, dialog dont show
              */
