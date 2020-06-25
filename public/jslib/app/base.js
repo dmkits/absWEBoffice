@@ -8,47 +8,51 @@ define(["dijit/registry", "dojo/dom-style"],
             getInstanceByID: function(id){
                 return registry.byId(id);
             },
-            instance: function(htmlElemID, Class, params) {
-                var instance = registry.byId(htmlElemID);
-                if (!instance) {
-                    if (!params) params={};
-                    params.id = htmlElemID;
-                    instance = new Class(params);
+            instance: function(htmlElemID, Class, params){
+                var instance= registry.byId(htmlElemID);
+                if(!instance){
+                    if(!params) params={};
+                    params.id= htmlElemID;
+                    instance= new Class(params);
                 }
                 return instance;
             },
-            instanceFor: function(htmlElem, Class, params) {
-                var id = htmlElem.getAttribute("id"), instance;
-                if (id!=undefined) instance = registry.byId(id);
-                if (!instance) {
-                    if (!params) params={};
-                    params.id = id;
-                    instance = new Class(params, htmlElem);
+            instanceFor: function(htmlElem, Class, params){
+                var id= htmlElem.getAttribute("id"), instance;
+                if(id!=undefined) instance= registry.byId(id);
+                if(!instance){
+                    if(!params) params={};
+                    params.id= id;
+                    instance= new Class(params, htmlElem);
                 }
                 return instance;
             },
-            instanceForID: function(htmlElemID, Class, params, style) {
-                var instance = registry.byId(htmlElemID);
-                if (!instance) {
-                    if (!params) params={};
-                    params.id = htmlElemID;
-                    instance = new Class(params, htmlElemID);
+            instanceForID: function(htmlElemID, Class, params, style){
+                var instance= registry.byId(htmlElemID);
+                if(!instance){
+                    if(!params) params={};
+                    params.id= htmlElemID;
+                    instance= new Class(params, htmlElemID);
                     if(style)
-                        for (var styleAttrName in style)
+                        for(var styleAttrName in style)
                             domStyle.set(htmlElemID, styleAttrName, style[styleAttrName]);
                 }
                 return instance;
             },
-            childFor: function(parent, ID, Class, params) {
-                var instance = registry.byId(ID);
-                if (!instance) {
-                    if (!params) params={};
-                    params.id = ID;
-                    instance = new Class(params);
-                    if (parent!=null) parent.addChild(instance);
+            childFor: function(parent, ID, Class, params){
+                var instance= registry.byId(ID);
+                if(!instance){
+                    if(!params) params={};
+                    params.id= ID;
+                    instance= new Class(params);
+                    if(parent!=null) parent.addChild(instance);
                 }
                 return instance;
             },
+            //removeInstance: function(elemID){
+            //    var instance= registry.byId(htmlElemID);
+            //    return instance;
+            //},
             today: function(){
                 return moment().toDate();
             },
