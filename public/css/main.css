@@ -76,6 +76,7 @@ input {
     width: 155px;
    /* background-image: url("/img/main-background-image.jpg");*/
     background-repeat: no-repeat;
+    background-position-x: center;
 }
 #main_mainMenu{
     margin: 0; padding: 1px;
