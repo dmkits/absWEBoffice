@@ -35,11 +35,15 @@
 </body>
 <script type="text/javascript"> $app.dev(true);
     $app.startup("#main_page",function(){                                                                       log("START MAIN PAGE...",$$);//!!!IT'S FOR TESTING!!!
+        var imageSmall;
         function setBrending(appConfig){
             if(!appConfig) return;
             if(appConfig.title) document.title=appConfig.title;
             if(appConfig.icon32x32) changeFavicon(appConfig.icon32x32);
-            if(appConfig.imageSmall) $$.main_topImg.set("style","background-image: url(\""+appConfig.imageSmall+"\")");
+            imageSmall= appConfig.imageSmall;
+            if(imageSmall) $$.main_topImg.set("style","background-image: url(\""+imageSmall+"\")");
+            if(appConfig.imageMain)
+                $$.main_tabs.domNode.children[$$.main_tabs.domNode.children.length-1].style["background-image"]="url(\""+appConfig.imageMain+"\")";
         }
         function changeFavicon(src){
             document.head = document.head || document.getElementsByTagName('head')[0];
@@ -96,8 +100,9 @@
             });
         };
         var aboutAction= function(){
+            var divImageMain= (imageSmall)?'<div style="width:110px;height:60px;background-image:url('+imageSmall+');background-repeat:no-repeat;background-position-x:center"></div>':'';
             $$.dialogs.showSimpleDialog({title:"О программе",
-                content:"<b>Absolute WEB-office</b>. <br>Разработчик: dmkits<br> 2020",
+                content:"<b>Absolute WEB-office</b>"+divImageMain+"<div>Разработчик: <b>dmkits <br>2020</b></div>",
                 btnOkLabel:"Закрыть"
             });
         };
@@ -108,18 +113,13 @@
             var iPageName="innerPage_"+itemData.menuItemName, iPageInstance=mainTabs.$.cid(iPageName);
             if(!iPageInstance){
                 mainTabs.$.addInnerPage({id:iPageName, title:itemData.pageTitle, region:"center",style:"margin:0;padding:0;",
-                            closable:itemData.closable, href:itemData.contentHref
-                        },
-                        function(innerPage){
-                            iPageInstance= mainTabs[iPageName]=innerPage;
-                        });
+                            closable:itemData.closable, href:itemData.contentHref, pageImageSmall:itemData.pageImageSmall },
+                        function(innerPage){ innerPage.domNode.pageImageSmall= itemData.pageImageSmall; });
             }
             var ch= mainTabs.selectChild(iPageName);
         };
         var createMainMenu= function(mainMenuData){
-            var menuClickAddInnerPage= function(menuItem,e){
-                runMenuAction(menuItem.itemData);
-            };
+            var menuClickAddInnerPage= function(menuItem,e){ runMenuAction(menuItem.itemData); };
             var mainMenu=$$.main_mainMenu;
             for(var i in mainMenuData){
                 var mainMenuDataItem= mainMenuData[i];
@@ -138,6 +138,7 @@
                                     menuBar.$.addMenu("MenuSeparator",{id:popupMenuItem.menuItemName});
                                     continue;
                                 }
+                                popupMenuItem.pageImageSmall= popupMenuItem.pageImageSmall||mainMenuDataItem.pageImageSmall;
                                 menuBar.$.addMenu("MenuItem",{id:popupMenuItem.menuItemName,label:popupMenuItem.menuTitle,itemData:popupMenuItem,
                                     click:menuClickAddInnerPage
                                 });
@@ -145,7 +146,7 @@
                         });
             }
         };
-        var runAutorunActions= function(mainContentData){                                            console.log("mainContentData",mainContentData);
+        var runAutorunActions= function(mainContentData){
             if(!mainContentData||!mainContentData.autorun) return;
             var autorunActions= mainContentData.autorun;
             for(var autorunIndex in autorunActions){
