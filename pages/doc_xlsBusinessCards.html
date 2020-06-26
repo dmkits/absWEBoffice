@@ -1,12 +1,11 @@
 <LayoutContainer id="xlsBusinessCards_PageContainer" style="width:100%;height:100%;margin:0px;padding:0;">
-    <StackContainer id="xlsBusinessCards_ContentContainer" region="center" tabPosition="top" style="width:100%;height:100%; margin:5px;padding:0;">
-        <TDocSimpleTableEdt id="xlsBusinessCards_TDocXlsBusinessCards" style="margin:0;padding:0;"></TDocSimpleTableEdt>
-    </StackContainer>
+    <TDocSimpleTableEdt id="xlsBusinessCards_TDocXlsBusinessCards" region="center" style="margin:5px;padding:0;"></TDocSimpleTableEdt>
 </LayoutContainer>
 <script type="text/javascript">
     $$.xlsBusinessCards_TDocXlsBusinessCards
-            .init({titleText: "База ВИЗИТКИ", dataURL:'/docXlsBusinessCards/getXlsBusinessCardsDataForTable', buttonPrint:false,
+            .init({titleText: "База ВИЗИТКИ", parentPage:this.$parent, buttonPrint:false,
                 manualColumnResize:true, manualColumnMove:true, rightPane:{width:300},
+                dataURL:'/docXlsBusinessCards/getXlsBusinessCardsDataForTable',
                 dataStoreURL:"/docXlsBusinessCards/storeXlsBusinessCardsTableData", dataDeleteURL:"/docXlsBusinessCards/delXlsBusinessCardsTableData"
             })
             .addTotalCountNumberBox("ИТОГО строк:", 140, {style:"font-weight:bold;",inputStyle:"width:40px;"})
@@ -39,9 +38,6 @@
                     crd.item("Region").setValue(Region);
                 }
                 nextCallback();
-            });
-    $$.xlsBusinessCards_TDocXlsBusinessCards.onShow= function(){
-        if(!$$.xlsBusinessCards_TDocXlsBusinessCards.startedUp)$$.xlsBusinessCards_TDocXlsBusinessCards.startupDoc();
-    };
-    $$.xlsBusinessCards_TDocXlsBusinessCards.onShow();
+            })
+            .startupDoc();
 </script>

@@ -41,6 +41,7 @@ define(["dojo/_base/declare", "dijit/layout/BorderContainer", "app/tDocsFunction
                     if(pName=="rightPane") this.rightContainerParams=pValue; else this[pName]=pValue;
                 }
                 if(this.titleText) this.topHeaderTitle.innerHTML=this.titleText;
+                this.setTopContent();
                 if(this.rightContainerParams) this.createRightContent(this.rightContainerParams);
                 this.contentHTable.updateSettings(params);
                 return this;
@@ -49,12 +50,25 @@ define(["dojo/_base/declare", "dijit/layout/BorderContainer", "app/tDocsFunction
                 this.topContent = $TDF.setChildContentPaneTo(this, {region:'top', style:"margin:0;padding:0;border:none"});
                 var topTable = $TDF.addTableTo(this.topContent.containerNode);
                 this.topTableRow = $TDF.addRowToTable(topTable);
-                var topTableHeaderCell = $TDF.addLeftCellToTableRow(this.topTableRow,1, "padding-bottom:5px;");
+                this.topTableCellImageLogo= $TDF.addLeftCellToTableRow(this.topTableRow,0,"padding-bottom:5px;");
+                var topTableHeaderCell2 = $TDF.addLeftCellToTableRow(this.topTableRow,1, "padding-bottom:5px;");
                 var topHeaderText = this.topHeaderTitle = document.createElement("h1");
                 topHeaderText.appendChild(document.createTextNode(this.titleText||this.title));
-                topTableHeaderCell.appendChild(topHeaderText);
+                topTableHeaderCell2.appendChild(topHeaderText);
                 var btnsTable = $TDF.addTableTo(this.topContent.containerNode);
                 this.btnsTableRow = $TDF.addRowToTable(btnsTable);
+                this.setTopContent();
+            },
+            setTopContent: function(){
+                if(this.parentPage&&this.parentPage.pageImageSmall&&this.topTableCellImageLogo){
+                    this.topTableCellImageLogo.style["display"]="";
+                    this.topTableCellImageLogo.style["width"]="100px"; this.topTableCellImageLogo.style["height"]="40px";
+                    this.topTableCellImageLogo.style["background-repeat"]="no-repeat"; this.topTableCellImageLogo.style["background-position-x"]="center";
+                    this.topTableCellImageLogo.style["background-image"]="url(\""+this.parentPage.pageImageSmall+"\")";
+                }else{
+                    this.topTableCellImageLogo.style["display"]="none"; this.topTableCellImageLogo.style["height"]="0px";
+                }
+                return this;
             },
             createContentTable: function(HTable, params){
                 if(!params) params={};
