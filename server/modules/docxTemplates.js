@@ -61,7 +61,6 @@ module.exports.init= function(app){
         }
         docxTemplatesByUID[tmplUID]= tmplItemData;
     }
-
     var checkTemplateDataOutputPath= function(sTemplateOutputPath){
         if(!sTemplateOutputPath) return true;
         var iOutputPathPosA=0, iOutputPathPosB=0, sTemplateOutputPathItem;
