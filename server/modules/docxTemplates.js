@@ -62,6 +62,33 @@ module.exports.init= function(app){
         docxTemplatesByUID[tmplUID]= tmplItemData;
     }
 
+    var checkTemplateDataOutputPath= function(sTemplateOutputPath){
+        if(!sTemplateOutputPath) return true;
+        var iOutputPathPosA=0, iOutputPathPosB=0, sTemplateOutputPathItem;
+        while(iOutputPathPosB<sTemplateOutputPath.length){
+            iOutputPathPosB= sTemplateOutputPath.indexOf("/",iOutputPathPosA+1);
+            if(iOutputPathPosB<0) iOutputPathPosB= sTemplateOutputPath.indexOf("\\",iOutputPathPosA+1);
+            if(iOutputPathPosB<0) iOutputPathPosB= sTemplateOutputPath.length;
+            sTemplateOutputPathItem= sTemplateOutputPath.substring(0,iOutputPathPosB);
+            try {
+                if(!fs.existsSync(sTemplateOutputPathItem)){ fs.mkdirSync(sTemplateOutputPathItem); }
+            }catch(e){                                                                                          log.error("FAILED create directory for template outputPath! Reason:",e.message);
+                return false;
+            }
+            iOutputPathPosA=iOutputPathPosB+1;
+        }
+        return true;
+    };
+    var checkAllTemplatesOutputPath= function(appConfigDocxTemplatesData){
+        if(!appConfigDocxTemplatesData) return true;
+        for(var tmplDataName in appConfigDocxTemplatesData){
+            var tmplData= appConfigDocxTemplatesData[tmplDataName];
+            if(!tmplData) continue;
+            if(!checkTemplateDataOutputPath(tmplData.outputPath)) return false;
+        }
+    };
+    checkAllTemplatesOutputPath(appConfigDocxTemplates.templates);
+
     app.get("/docxTemplates/*",function(req,res){
         if(!req.params){ res.send({error:"UNKNOWN URI!"}); return; }
         var urlParams= req.params[0].split('/'), tUID= urlParams[0], action= urlParams[1];                      //console.log("urlParams",urlParams);
@@ -143,6 +170,11 @@ module.exports.init= function(app){
                     if(ramdomizer.fonts) newVal.fontName= ramdomizer.fonts[randomFont];
                     if(ramdomizer.sizes) newVal.fontSize= ramdomizer.sizes[randomFSize];
                 }
+            }
+            if(!checkTemplateDataOutputPath(tmplData.outputPath)){
+                res.send({error:{message:"Failed create output files by template outputPath!",userMessage:"Не удалось создать файлы документов по шаблонам! Причина: некорректный путь для создания файлов в настройках шаблонов."},
+                    storeHistoryResult:storeHistoryResult});
+                return;
             }
             genDOCX.generateDOCX(0,{values:values,files:files,directory:tmplData.directory,outputPath:tmplData.outputPath},
                 function(result){
