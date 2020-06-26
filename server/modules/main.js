@@ -64,8 +64,7 @@ module.exports.init= function(app){
             res.send(outData);
             return;
         }
-        outData.title= appConfig.title;
-        outData.icon32x32= appConfig.icon32x32; outData.imageSmall= appConfig.imageSmall; outData.imageMain= appConfig.imageMain;
+        outData.appConfig= {title:appConfig.title, icon32x32:appConfig.icon32x32, imageSmall:appConfig.imageSmall, imageMain:appConfig.imageMain};
         outData.appUserName= req.appUserName||"UNKNOWN"; outData.appUserRole= req.appUserRole||"UNKNOWN";
         setUserMenuFromAppConfig(outData, req.appUserLogin, req.appUserRole, getAppConfigUsers, getAppConfigMenuItems, getAppConfigUsersRoles);
         docxTemplates.setUserMenuDocxTemplatesFromAppConfig(outData.menuBar,server.getAppConfigDocxTemplates());
